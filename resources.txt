@@ -17,3 +17,7 @@ Technical Resources for Laughter Training
 - https://research.google.com/audioset/
 
 - https://eqradio.csail.mit.edu/
+
+- http://www.ilhaire.eu/blog~Online-Multimodal-Laughter-Detection-System
+
+- testing
