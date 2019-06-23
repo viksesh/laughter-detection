@@ -1,0 +1,19 @@
+Idea Maze
+Google Clips
+
+Obsbot Tail
+
+GoPro
+
+Narrative Clip
+
+
+
+
+
+Technical Resources for Laughter Training
+- https://labs.ideo.com/2018/06/15/how-to-build-your-own-laugh-detector/
+
+- https://research.google.com/audioset/
+
+- https://eqradio.csail.mit.edu/
