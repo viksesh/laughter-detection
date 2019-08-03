@@ -1,6 +1,6 @@
 name: laughter-analysis
 dependencies:
-  - python=3.4
+  - python>=3.2
   - numpy
   - toolz
   - matplotlib
@@ -23,3 +23,4 @@ dependencies:
     - partd
     - bokeh
     - ipykernel
+    - resampy

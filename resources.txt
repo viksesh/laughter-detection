@@ -20,4 +20,9 @@ Technical Resources for Laughter Training
 
 - http://www.ilhaire.eu/blog~Online-Multimodal-Laughter-Detection-System
 
+- https://dl.acm.org/citation.cfm?id=2993148.2998524
+
+
 - testing
+
+- http://www1.icsi.berkeley.edu/~knoxm/cs294report.pdf

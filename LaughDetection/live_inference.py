@@ -1,8 +1,10 @@
 import tensorflow as tf
 import keras
+import csv
 from datetime import datetime
 import numpy as np
 import tempfile
+import os
 from scipy.io import wavfile
 
 from audioset import vggish_embeddings
@@ -15,7 +17,7 @@ flags.DEFINE_string(
     'Path to trained keras model that will be used to run inference.')
 
 flags.DEFINE_float(
-    'sample_length', 3.0,
+    'sample_length', 30.0,
     'Length of audio sample to process in each chunk'
 )
 
@@ -68,11 +70,22 @@ def map_range(x, s, e):
 
 
 if __name__ == '__main__':
+    #loading the specific trained laughter detection model, can modify the flag for new model
     model = keras.models.load_model(FLAGS.keras_model)
     audio_embed = vggish_embeddings.VGGishEmbedder()
 
     if FLAGS.save_file:
-        writer = open(FLAGS.save_file, 'w')
+        if os.path.exists(FLAGS.save_file):
+            pass
+        else:
+            with open(FLAGS.save_file, 'w') as writeFile:
+                writer = csv.writer(writeFile)
+                if FLAGS.recording_directory:
+                    row = ['Date', 'filepath', 'laugh_score', 'volume']
+                    writer.writerow(row)
+                else:
+                    row = ['Date', 'laugh_score', 'volume']
+                    writer.writerow(row)
 
     if FLAGS.hue_lights:
         from phue import Bridge
@@ -83,9 +96,12 @@ if __name__ == '__main__':
         blue_xy = [0.1691, 0.0441]
         white_xy = [0.4051, 0.3906]
 
+    #need to investigate what this window is used for, taking half of the window length
     window = [0.5]*FLAGS.avg_window
 
+    #using MicrophoneStream as context class, using stream object to process the data
     with MicrophoneStream(RATE, CHUNK) as stream:
+        #stream.generator() function automatically processes the 10 second chunks and puts them in a generator
         audio_generator = stream.generator()
         for chunk in audio_generator:
             try:
@@ -93,24 +109,34 @@ if __name__ == '__main__':
                 vol = np.sqrt(np.mean(arr**2))
                 embeddings = audio_embed.convert_waveform_to_embedding(arr, RATE)
                 p = model.predict(np.expand_dims(embeddings, axis=0))
+
                 window.pop(0)
                 window.append(p[0, 0])
 
                 if FLAGS.hue_lights:
                     set_light(lights, 0.6, sum(window)/len(window))
 
-                if FLAGS.recording_directory:
-                    f = tempfile.NamedTemporaryFile(delete=False, suffix='.wav', dir=FLAGS.recording_directory)
-                    wavfile.write(f, RATE, arr)
-
                 if FLAGS.print_output:
                     print(str(datetime.now()) + ' - Laugh Score: {0:0.6f} - vol:{1}'.format(p[0, 0], vol))
 
                 if FLAGS.save_file:
-                    if FLAGS.recording_directory:
-                        writer.write(str(datetime.now()) + ',{},{},{}\n'.format(f.name, p[0, 0], vol))
-                    else:
-                        writer.write(str(datetime.now()) + ',{},{}\n'.format(p[0, 0], vol))
+                    with open(FLAGS.save_file, 'a') as writeFile:
+                        writer = csv.writer(writeFile)
+                        if (FLAGS.recording_directory is not None) & (p[0,0] > 30):
+                            f = tempfile.NamedTemporaryFile(delete=False, suffix='.wav', dir=FLAGS.recording_directory)
+                            wavfile.write(f, RATE, arr)
+                            time_value = datetime.now().strftime("%b %d %Y %H:%M:%S")
+                            row = [time_value, f.name, p[0,0], vol]
+                            writer.writerow(row)
+                        elif FLAGS.recording_directory:
+                            time_value = datetime.now().strftime("%b %d %Y %H:%M:%S")
+                            row = [time_value, 'not funny enough for saving', p[0,0], vol]
+                            writer.writerow(row)
+                        else:
+                            with open(FLAGS.save_file, 'a') as writeFile:
+                                writer = csv.writer(writeFile)
+                                row = [str(datetime.now()),'no filepath, audio not saved' ,p[0,0], vol]
+                                writer.writerow(row)
 
             except (KeyboardInterrupt, SystemExit):
                 print('Shutting Down -- closing file')
