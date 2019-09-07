@@ -16,7 +16,7 @@ def get_score():
         # try:
         #     #content_type = request.content_type()
         #     #length = request.content_length()
-        #     stream = request.content_type()
+        #     stream = request.data()
         #     if stream is None:
         #         return 'input_stream data not captured'
         #     else:
@@ -24,7 +24,15 @@ def get_score():
         # except Exception as e:
         #     #return ('error is {}'.format(e))
         #     return ('error is {}'.format(e))
-        return (request.content_type)
+        #length = request.content_length
+        #type = request.content_type
+        #stream = request.args.get('stupid')
+        length = request.content_length
+        type = request.content_type
+        stream = request.input_stream()
+        #return 'length of file {}'.format(length)
+        #return 'type of file {}'.format(type)
+        return 'stream is {}'.format(stream)
     elif request.method == 'GET':
         return 'get method received'
 
