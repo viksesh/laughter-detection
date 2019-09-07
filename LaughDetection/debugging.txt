@@ -16,3 +16,7 @@ calling request.data() and request.stream() in the try clause doesn't work
 calling request.content_length() also gives ChunkedEncodingError "Connection broken, connection reset by peer"
 
 if I try take out the headers part of the request, when calling request.content_type(), I will again get the ChunkedEncodingError connection reset by peer error
+
+
+
+When I use the Postman client to send the request, I send the wav file as a binary
