@@ -24,13 +24,21 @@ def send_audio():
 @app.route('/api/audio', methods=['GET', 'POST'])
 def get_score():
     if request.method == 'POST':
-        filepath = request.files['file']
-        value = len(filepath)
-        type = type(filepath)
-        return ('got audio data and the number of value is {} \n \
-                here are the keys {}'.format(value, type))
+        #filepath = request.files['file']
+        #value = len(filepath)
+        #type = type(filepath)
+        # try:
+        #     req = request.content_type()
+        #     if req is None:
+        #         return 'audio data is not json format'
+        #     elif:
+        #         return 'try block got something'
+        # except:
+        return ('got error in json request data and the content type is {}'.format(request.content_type))
+    elif request.method == 'GET':
+        return 'get method received'
 
 
 if __name__ == 'main':
-    send_audio()
+    #send_audio()
     app.run(debug=True)
