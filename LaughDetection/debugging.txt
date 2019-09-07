@@ -1,0 +1,18 @@
+
+
+
+I'm currently sending my audio file as a io.BufferedReader object and putting that in
+the data field of the http request...is that the right way to send the request? I followed the example
+on github because the multi-part file didn't work originally
+
+I know that the request was sent properly to the server, I just don't know how to decode the bytes in the
+data field on the server-side logic of things. I have gotten two different errors:
+- Connection Reset by Peer error
+- requests.exceptions.ChunkedEncodingError: ("Connection broken: ConnectionResetError(54, 'Connection reset by peer')", ConnectionResetError(54, 'Connection reset by peer'))
+
+calling request.data() and request.stream() in the try clause doesn't work
+- error message is Bytes object is not callable and TypeError
+
+calling request.content_length() also gives ChunkedEncodingError "Connection broken, connection reset by peer"
+
+if I try take out the headers part of the request, when calling request.content_type(), I will again get the ChunkedEncodingError connection reset by peer error
