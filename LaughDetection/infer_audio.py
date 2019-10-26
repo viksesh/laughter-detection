@@ -30,9 +30,19 @@ flags.DEFINE_string(
 FLAGS = flags.FLAGS
 
 
+#TF_RECORD_PATH = '/Data/.tfrecord'
+MODEL_PATH = '/Users/kaushikandra/laughter-detection/LaughDetection/Models/LSTM_SingleLayer_100Epochs.h5'
+
 def predict_laugh(processed_embedding):
-    model = keras.models.load_model(FLAGS.keras_model)
+    model = keras.models.load_model(MODEL_PATH)
     return model.predict(processed_embedding)
+
+def process_wav_file(stream):
+    audio_embedder = vggish_embeddings.VGGishEmbedder(None)
+    processed_embedding =  audio_embedder.convert_audio_to_embedding(stream)
+    p = predict_laugh(np.expand_dims(processed_embedding, axis=0))
+    print('Laugh Score: {}'.format(p))
+    return p
 
 
 if __name__ == '__main__':
